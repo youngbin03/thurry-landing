@@ -1,3 +1,36 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemap
+Sitemap: https://thurry.com/sitemap.xml
+
+# 중요 페이지 크롤링 우선순위 지정
+Allow: /$
+Allow: /images/
+Allow: /favicons/
+
+# 불필요한 리소스 제외
+Disallow: /static/js/
+Disallow: /static/css/
+Disallow: /static/media/
+Disallow: /*.js$
+Disallow: /*.css$
+Disallow: /*?*
+
+# 검색 엔진별 특수 설정
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Yeti
+Allow: /
+Crawl-delay: 1
+
+User-agent: Daum
+Allow: /
+Crawl-delay: 1
+
+User-agent: Naver
+Allow: /
+Crawl-delay: 1

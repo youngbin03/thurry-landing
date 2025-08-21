@@ -70,7 +70,7 @@ export const shareToKakao = async (): Promise<ShareResponse> => {
             content: {
               title: '떠리 무료 패스권 🎁',
               description: '일주일 동안 매일 무료빵 1개!\n성동구 제휴 푸드매장의 마감메뉴를 하루 1개, 무료로 픽업할 수 있는 구독형 패스입니다.',
-              image_url: 'https://k.kakaocdn.net/dn/bzZi5S/btsPYJHgD46/c7HfqkpJp2hD5wLwKbXsVK/kakaolink40_original.png',
+              image_url: 'https://thurry.com/images/page03.png',
               link: {
                 web_url: 'https://thurry.com',
                 mobile_web_url: 'https://thurry.com'

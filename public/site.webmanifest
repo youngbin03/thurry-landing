@@ -1,0 +1,46 @@
+{
+  "name": "떠리 - 베이커리 마감할인",
+  "short_name": "떠리",
+  "description": "매일 신선한 마감 할인 빵을 만나보세요! 성동구 제휴 베이커리의 마감 메뉴를 하루 1개 무료로 픽업할 수 있는 구독형 패스 서비스, 떠리",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#f97316",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/",
+  "orientation": "portrait",
+  "lang": "ko-KR",
+  "dir": "ltr",
+  "categories": ["food", "shopping", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "/images/page03.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide"
+    }
+  ],
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "id": "com.thurry.app",
+      "url": "https://play.google.com/store/apps/details?id=com.thurry.app"
+    },
+    {
+      "platform": "itunes",
+      "id": "6742439407",
+      "url": "https://apps.apple.com/kr/app/id6742439407"
+    }
+  ]
+}
