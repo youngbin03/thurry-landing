@@ -18,25 +18,25 @@ const foodOptions: FoodOption[] = [
   {
     id: 'salad_sandwich',
     title: '샐러드/샌드위치',
-    image: '/images/IMG01.PNG',
+    image: '/images/IMG01.webp',
     category: 'healthy'
   },
   {
     id: 'bakery',
     title: '베이커리',
-    image: '/images/IMG02.JPG',
+    image: '/images/IMG02.webp',
     category: 'bakery'
   },
   {
     id: 'sushi',
     title: '초밥',
-    image: '/images/IMG03.JPG',
+    image: '/images/IMG03.webp',
     category: 'japanese'
   },
   {
     id: 'dosirak',
     title: '도시락/간편식',
-    image: '/images/IMG04.PNG',
+    image: '/images/IMG04.webp',
     category: 'convenience'
   }
 ];
@@ -130,11 +130,11 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
           </>
         ) : (
           // 감사 메시지
-          <div className="max-w-[280px] mx-auto p-8 text-center bg-white rounded-2xl">
+          <div className="max-w-[240px] mx-auto p-6 text-center bg-white rounded-2xl">
             <img
               src="/images/bread_love.png"
               alt="감사합니다"
-              className="w-24 h-24 mx-auto mb-3 animate-[bounceIn_0.5s_ease-out]"
+              className="w-20 h-20 mx-auto mb-3 animate-[bounceIn_0.5s_ease-out]"
             />
             <h3 className="text-lg font-bold text-gray-800 mb-2">
               참여해 주셔서 감사해요!

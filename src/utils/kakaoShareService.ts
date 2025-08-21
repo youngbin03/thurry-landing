@@ -16,13 +16,31 @@ interface KakaoShareResult {
 export class KakaoShareService {
   private static readonly WEBHOOK_CHECK_INTERVAL = 3000; // 3초마다 체크
   private static readonly WEBHOOK_TIMEOUT = 60000; // 60초 타임아웃
+  private static readonly APP_KEY = '3603235ce533a9b3b7a8192bf07c5908';
 
   /**
    * 카카오톡 공유하기 실행
    */
-  static async shareThurryPassPreorder(): Promise<ShareResponse> {
+  private static initializeKakao() {
     if (!window.Kakao) {
       console.error('Kakao SDK가 로드되지 않았습니다.');
+      return false;
+    }
+
+    if (!window.Kakao.isInitialized()) {
+      try {
+        window.Kakao.init(this.APP_KEY);
+        console.log('Kakao SDK 초기화 완료');
+      } catch (error) {
+        console.error('Kakao SDK 초기화 실패:', error);
+        return false;
+      }
+    }
+
+    return true;
+  }
+  static async shareThurryPassPreorder(): Promise<ShareResponse> {
+    if (!this.initializeKakao()) {
       return { success: false };
     }
 
@@ -71,24 +89,28 @@ export class KakaoShareService {
           }]
         };
 
-        const shareUrl = `https://sharer.kakao.com/talk/friends/picker/link` +
-          `?app_key=${window.Kakao.getAppKey()}` +
-          `&validation_action=default` +
-          `&validation_params=${encodeURIComponent(JSON.stringify({
-            link_ver: '4.0',
-            template_object: templateObject,
-            server_callback_args: serverCallbackArgs
-          }))}`;
+                  // 데스크톱에서는 기본 공유 사용
+          await window.Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+              title: '떠리 무료 패스권 🎁',
+              description: '일주일 동안 매일 무료빵 1개!\n성동구 제휴 푸드매장의 마감메뉴를 하루 1개, 무료로 픽업할 수 있는 구독형 패스입니다.',
+              imageUrl: 'https://thurry.com/images/page03.png',
+              link: {
+                mobileWebUrl: 'https://thurry.com',
+                webUrl: 'https://thurry.com'
+              }
+            },
+            buttons: [{
+              title: '무료 패스권 얻기',
+              link: {
+                mobileWebUrl: 'https://thurry.com',
+                webUrl: 'https://thurry.com'
+              }
+            }],
+            serverCallbackArgs: JSON.stringify(serverCallbackArgs)
+          });
 
-        const popup = window.open(
-          shareUrl,
-          'kakao_share_popup',
-          'width=500,height=700,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,status=no'
-        );
-
-        if (!popup) {
-          throw new Error('팝업이 차단되었습니다.');
-        }
       }
 
       return { success: true, callbackId };
