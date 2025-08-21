@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 
 interface CouponCardProps {
@@ -14,6 +14,7 @@ interface CouponCardProps {
 
 const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, userInfo }) => {
   const couponRef = useRef<HTMLDivElement>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('ko-KR', {
@@ -24,45 +25,132 @@ const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, use
   };
 
   const handleSaveImage = async () => {
-    if (!couponRef.current) return;
+    if (!couponRef.current || isSaving) return;
 
+    setIsSaving(true);
+    
     try {
-      // 이미지 저장 전 레이아웃 강제 안정화
       const element = couponRef.current;
       
-      // 모든 애니메이션 일시 정지
-      const originalAnimation = element.style.animation;
-      element.style.animation = 'none';
+      console.log('🖼️ 쿠폰 이미지 저장 시작');
       
-      // 약간의 지연으로 레이아웃 안정화
-      await new Promise(resolve => setTimeout(resolve, 100));
-
+      // 1. 모든 애니메이션과 transform 일시 정지
+      const elementsToRestore: { element: HTMLElement; originalStyle: any }[] = [];
+      
+      const disableAnimationsAndTransforms = (el: HTMLElement) => {
+        elementsToRestore.push({
+          element: el,
+          originalStyle: {
+            animation: el.style.animation,
+            transform: el.style.transform,
+            transition: el.style.transition
+          }
+        });
+        
+        el.style.animation = 'none';
+        el.style.transform = 'none';
+        el.style.transition = 'none';
+        
+        // 자식 요소들도 재귀적으로 처리
+        Array.from(el.children).forEach(child => {
+          if (child instanceof HTMLElement) {
+            disableAnimationsAndTransforms(child);
+          }
+        });
+      };
+      
+      disableAnimationsAndTransforms(element);
+      
+      // 2. 이미지 로딩 대기
+      const images = element.querySelectorAll('img');
+      const imagePromises = Array.from(images).map(img => {
+        return new Promise((resolve) => {
+          if (img.complete) {
+            resolve(img);
+          } else {
+            img.onload = () => resolve(img);
+            img.onerror = () => resolve(img); // 오류가 있어도 계속 진행
+            // 타임아웃 설정 (5초)
+            setTimeout(() => resolve(img), 5000);
+          }
+        });
+      });
+      
+      console.log(`📸 ${images.length}개 이미지 로딩 대기 중...`);
+      await Promise.all(imagePromises);
+      
+      // 3. 레이아웃 안정화 대기
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      console.log('🎨 html2canvas 실행 중...');
+      
+      // 4. 캔버스 생성
       const canvas = await html2canvas(element, {
-        scale: 2,
-        backgroundColor: null,
-        logging: false,
+        scale: 2, // 고해상도
+        backgroundColor: '#ffffff', // 흰색 배경
+        logging: true, // 디버깅용 로그 활성화
         useCORS: true,
-        allowTaint: false,
-        foreignObjectRendering: true,
+        allowTaint: true, // 외부 이미지 허용
+        foreignObjectRendering: false, // 안정성을 위해 비활성화
+        imageTimeout: 10000, // 이미지 로딩 타임아웃 10초
+        removeContainer: true,
         width: element.offsetWidth,
         height: element.offsetHeight,
+        x: 0,
+        y: 0,
         scrollX: 0,
         scrollY: 0,
-        windowWidth: element.offsetWidth,
-        windowHeight: element.offsetHeight,
+        onclone: (clonedDoc, clonedElement) => {
+          // 클론된 문서에서 추가 스타일 정리
+          const allElements = clonedElement.querySelectorAll('*');
+          allElements.forEach(el => {
+            if (el instanceof HTMLElement) {
+              el.style.animation = 'none';
+              el.style.transform = 'none';
+              el.style.transition = 'none';
+            }
+          });
+        }
       });
 
-      // 애니메이션 복원
-      element.style.animation = originalAnimation;
+      console.log('✅ 캔버스 생성 완료:', canvas.width, 'x', canvas.height);
+
+      // 5. 스타일 복원
+      elementsToRestore.forEach(({ element: el, originalStyle }) => {
+        el.style.animation = originalStyle.animation || '';
+        el.style.transform = originalStyle.transform || '';
+        el.style.transition = originalStyle.transition || '';
+      });
+
+      // 6. 캔버스 검증
+      if (canvas.width === 0 || canvas.height === 0) {
+        throw new Error('캔버스 크기가 0입니다.');
+      }
+
+      // 7. 이미지 다운로드
+      const dataURL = canvas.toDataURL('image/png', 1.0);
+      
+      // 빈 이미지 검증 (매우 작은 파일 크기 체크)
+      if (dataURL.length < 1000) {
+        throw new Error('생성된 이미지가 비어있습니다.');
+      }
 
       const link = document.createElement('a');
       link.download = `thurry-pass-${passId.slice(-8)}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0);
+      link.href = dataURL;
+      document.body.appendChild(link);
       link.click();
-      alert('쿠폰 이미지가 저장되었습니다!');
+      document.body.removeChild(link);
+      
+      console.log('💾 이미지 저장 완료');
+      alert('쿠폰 이미지가 저장되었습니다! 📱');
+      
     } catch (error) {
-      console.error('이미지 저장 실패:', error);
-      alert('쿠폰 이미지 저장에 실패했습니다.');
+      console.error('❌ 이미지 저장 실패:', error);
+      const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+      alert(`쿠폰 이미지 저장에 실패했습니다.\n오류: ${errorMessage}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -70,72 +158,32 @@ const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, use
     <div className="relative flex flex-col items-center">
       <div 
         ref={couponRef}
-        className="w-full max-w-md mx-auto rounded-xl overflow-hidden shadow-xl relative bg-gradient-to-br from-orange-400 via-orange-500 to-yellow-500 animate-gradient-x"
+        className="w-full max-w-md mx-auto rounded-xl overflow-hidden shadow-xl relative bg-gradient-to-br from-orange-400 via-orange-500 to-yellow-500"
+        style={{
+          background: 'linear-gradient(135deg, #fb923c 0%, #f97316 50%, #eab308 100%)'
+        }}
       >
         {/* 티켓 상단 */}
-                <div className="p-6 text-white">
-          <div className="flex items-center justify-between mb-4" style={{ 
-            transform: 'translate3d(0, 0, 0)',
-            position: 'relative',
-            top: '0px',
-            left: '0px'
-          }}>
-            <div className="flex items-center" style={{ 
-              transform: 'translate3d(0, 0, 0)',
-              position: 'relative',
-              top: '0px',
-              left: '0px'
-            }}>
-              <div className="bg-white p-2 rounded-lg mr-2" style={{ 
-                transform: 'translate3d(0, 0, 0)',
-                position: 'relative',
-                top: '0px',
-                left: '0px'
-              }}>
+        <div className="p-6 text-white">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <div className="bg-white p-2 rounded-lg mr-2">
                 <img 
                   src="/images/ThurryLogo.png" 
                   alt="Thurry" 
-                  className="w-6 h-6" 
-                  style={{ 
-                    transform: 'translate3d(0, 0, 0)',
-                    position: 'relative',
-                    display: 'block',
-                    maxWidth: '100%',
-                    height: 'auto',
-                    top: '0px',
-                    left: '0px'
-                  }} 
+                  className="w-6 h-6 block"
+                  crossOrigin="anonymous"
                 />
               </div>
-              <h3 className="text-xl font-bold" style={{ 
-                transform: 'translate3d(0, 0, 0)',
-                position: 'relative',
-                display: 'block',
-                top: '0px',
-                left: '0px'
-              }}>떠리 패스</h3>
+              <h3 className="text-xl font-bold">떠리 패스</h3>
             </div>
             <div 
               className="px-3 py-1 rounded-full text-sm font-medium" 
-              style={{ 
-                background: 'rgba(255, 255, 255, 0.2)',
-                transform: 'translate3d(0, 0, 0)',
-                position: 'relative',
-                display: 'block',
-                top: '0px',
-                left: '0px'
-              }}
+              style={{ background: 'rgba(255, 255, 255, 0.2)' }}
             >
-              <span 
-                className="font-medium tracking-wider text-white"
-                style={{ 
-                  transform: 'translate3d(0, 0, 0)',
-                  position: 'relative',
-                  display: 'block',
-                  top: '0px',
-                  left: '0px'
-                }}
-              >#{passId.slice(-8)}</span>
+              <span className="font-medium tracking-wider text-white">
+                #{passId.slice(-8)}
+              </span>
             </div>
           </div>
           
@@ -182,21 +230,53 @@ const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, use
         </div>
 
         {/* 장식용 빵 아이콘들 */}
-        <div className="absolute -right-20 -top-20 opacity-[0.07] rotate-12">
-          <span className="text-[180px]">🥨</span>
+        <div 
+          className="absolute opacity-[0.07] pointer-events-none select-none"
+          style={{ 
+            right: '-80px', 
+            top: '-80px', 
+            transform: 'rotate(12deg)',
+            fontSize: '180px',
+            lineHeight: '1'
+          }}
+        >
+          🥨
         </div>
-        <div className="absolute -left-20 -bottom-20 opacity-[0.07] -rotate-12">
-          <span className="text-[180px]">🥖</span>
+        <div 
+          className="absolute opacity-[0.07] pointer-events-none select-none"
+          style={{ 
+            left: '-80px', 
+            bottom: '-80px', 
+            transform: 'rotate(-12deg)',
+            fontSize: '180px',
+            lineHeight: '1'
+          }}
+        >
+          🥖
         </div>
       </div>
 
       {/* 이미지 저장 버튼 */}
       <button
         onClick={handleSaveImage}
-        className="mt-6 px-6 py-3 bg-white rounded-xl text-gray-800 font-medium shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+        disabled={isSaving}
+        className={`mt-6 px-6 py-3 rounded-xl font-medium shadow-lg transition-colors flex items-center gap-2 ${
+          isSaving 
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
+            : 'bg-white text-gray-800 hover:bg-gray-50'
+        }`}
       >
-        <span className="text-l">💾</span>
-        쿠폰 이미지로 저장하기
+        {isSaving ? (
+          <>
+            <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+            이미지 생성 중...
+          </>
+        ) : (
+          <>
+            <span className="text-l">💾</span>
+            쿠폰 이미지로 저장하기
+          </>
+        )}
       </button>
     </div>
   );
