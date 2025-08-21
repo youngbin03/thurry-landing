@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { shareToKakao, waitForWebhookCallback } from '../utils/kakaoShare';
+import { KakaoShareService } from '../utils/kakaoShareService';
 import CouponCard from './CouponCard';
 import ShareFailDialog from './ShareFailDialog';
 
@@ -65,78 +65,49 @@ const PreRegistrationSection: React.FC = () => {
       
       // 유효성 검사 통과 시 에러 상태 초기화
       setValidationErrors({});
-      
       setIsLoading(true);
-      console.log('카카오톡 공유 시작...');
-      
-      // 데스크톱 환경에서 팝업 차단 경고
-      const isDesktop = !(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
-      if (isDesktop) {
-        console.log('데스크톱 환경 감지: 팝업 허용이 필요할 수 있습니다.');
-      }
-      
-      const shareResult = await shareToKakao();
-      
-      if (!shareResult.success) {
-        if (isDesktop) {
-          // 데스크톱에서는 팝업 차단 안내를 위한 별도 처리
-          alert('❌ 카카오톡 공유 다이얼로그를 열 수 없습니다!\n\n해결 방법:\n1. 브라우저 주소창 오른쪽의 팝업 차단 아이콘 클릭\n2. "팝업 및 리디렉션 허용" 선택\n3. 페이지 새로고침 후 다시 시도');
-        } else {
-          setShowFailDialog(true);
-        }
+
+      // 카카오톡 공유 및 패스권 발급 프로세스 시작
+      const result = await KakaoShareService.shareAndGetPass();
+
+      if (!result.success) {
+        console.error('공유 실패:', result.error);
+        setShowFailDialog(true);
         return;
       }
+
+      // 패스권 발급 성공
+      console.log('패스권 발급 성공:', result.passId);
+
+      // UI용 쿠폰 데이터 생성
+      const now = new Date();
+      const startDate = new Date(2024, 8, 1); // 9월 1일
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 7); // 일주일 후
       
-      console.log('카카오톡 공유 API 호출 성공, 웹훅 대기 중...');
-      
-      // 웹훅 콜백 대기 (Firebase Functions에서 자동 패스권 생성)
-      if (shareResult.callbackId) {
-        console.log('실제 카카오톡 공유 완료 확인 중...');
-        const actuallyShared = await waitForWebhookCallback(shareResult.callbackId, 60000);
-        
-        if (!actuallyShared) {
-          setShowFailDialog(true);
-          return;
-        }
-        
-        console.log('Firebase Functions에서 패스권 생성 완료! 쿠폰 표시 중...');
-        
-        // Firebase Functions에서 자동으로 패스권을 생성했으므로 
-        // 여기서는 UI용 쿠폰 데이터만 생성
-        const now = new Date();
-        const startDate = new Date(2024, 8, 1); // 9월 1일
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 7); // 일주일 후
-        
-        // 현재 날짜가 9월 1일 이후라면 오늘부터 시작
-        if (now >= startDate) {
-          startDate.setTime(now.getTime());
-          endDate.setTime(now.getTime() + (7 * 24 * 60 * 60 * 1000));
-        }
-        
-        setCouponData({
-          passId: 'THURRY_' + Math.random().toString(36).substr(2, 8).toUpperCase(),
-          startDate: startDate,
-          endDate: endDate,
-          userInfo: {
-            gender: gender,
-            age: age,
-            registeredAt: new Date().toISOString()
-          }
-        });
-        setShowCoupon(true);
-        
-        // 성공 알림
-        alert('🎉 떠리 패스권이 발급되었습니다!\n매일 무료빵 1개씩 받아가세요!');
-        
-      } else {
-        // callbackId가 없는 경우
-        console.log('웹훅 미지원 환경');
-        alert('카카오톡 공유를 완료해주세요.\n공유가 완료되면 자동으로 패스권이 발급됩니다.');
+      // 현재 날짜가 9월 1일 이후라면 오늘부터 시작
+      if (now >= startDate) {
+        startDate.setTime(now.getTime());
+        endDate.setTime(now.getTime() + (7 * 24 * 60 * 60 * 1000));
       }
+      
+      setCouponData({
+        passId: result.passId || `THURRY_${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
+        startDate: startDate,
+        endDate: endDate,
+        userInfo: {
+          gender: gender,
+          age: age,
+          registeredAt: new Date().toISOString()
+        }
+      });
+
+      // 성공 UI 표시
+      setShowCoupon(true);
+      
     } catch (error) {
       console.error('처리 중 오류:', error);
-      alert('처리 중 오류가 발생했습니다.');
+      setShowFailDialog(true);
     } finally {
       setIsLoading(false);
     }

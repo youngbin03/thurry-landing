@@ -130,17 +130,17 @@ const SurveyDialog: React.FC<SurveyDialogProps> = ({ isOpen, onClose }) => {
           </>
         ) : (
           // 감사 메시지
-          <div className="p-8 text-center bg-white">
+          <div className="max-w-[280px] mx-auto p-8 text-center bg-white rounded-2xl">
             <img
               src="/images/bread_love.png"
               alt="감사합니다"
-              className="w-32 h-32 mx-auto mb-4 animate-[bounceIn_0.5s_ease-out]"
+              className="w-24 h-24 mx-auto mb-3 animate-[bounceIn_0.5s_ease-out]"
             />
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">
               참여해 주셔서 감사해요!
             </h3>
-            <p className="text-gray-600">
-              더 나은 서비스를 위해 소중한 의견으로 활용할게요 💝
+            <p className="text-sm text-gray-600">
+              더 나은 서비스를 위해<br />소중한 의견으로 활용할게요 💝
             </p>
           </div>
         )}
