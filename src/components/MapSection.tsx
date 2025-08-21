@@ -22,9 +22,8 @@ const MapSection: React.FC = () => {
         };
         const map = new window.naver.maps.Map(mapRef.current, mapOptions);
 
-        // 마커 추가
-        // 정보 카드 생성
-        const contentString = [
+        // 첫 번째 마커 - 아보카도 샌드위치 (기존)
+        const contentString1 = [
           '<div class="bg-white rounded-lg overflow-hidden shadow-lg" style="width: 160px;">',
           '  <div style="height: 140px; overflow: hidden; position: relative;">',
           '    <img src="/images/food.jpg" alt="아보카도 샌드위치" style="width: 100%; height: 140px; object-fit: cover; object-position: center 40%;" />',
@@ -56,8 +55,42 @@ const MapSection: React.FC = () => {
           '</div>'
         ].join('');
 
-        const infowindow = new window.naver.maps.InfoWindow({
-          content: contentString,
+        // 두 번째 마커 - 소금빵 (새로 추가)
+        const contentString2 = [
+          '<div class="bg-white rounded-lg overflow-hidden shadow-lg" style="width: 160px;">',
+          '  <div style="height: 140px; overflow: hidden; position: relative;">',
+          '    <img src="/images/food02.jpg" alt="소금빵" style="width: 100%; height: 140px; object-fit: cover; object-position: center 40%;" />',
+          '  </div>',
+          '  <div class="p-2.5" style="font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;">',
+          '    <div style="padding-left: 1px;">',
+          '      <h4 style="font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px;">성동구 베이커리</h4>',
+          '      <div style="margin-bottom: 4px;">',
+          '        <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 3px;">',
+          '          <span style="font-size: 13px;">🎁</span>',
+          '          <p style="font-size: 12px; color: #f97316; font-weight: 600;">오늘의 무료빵</p>',
+          '        </div>',
+          '        <div style="background: #f3f4f6; padding: 6px; border-radius: 6px; text-align: center;">',
+          '          <p style="font-size: 14px; color: #333; font-weight: 700; line-height: 1.2;">소금빵</p>',
+          '        </div>',
+          '      </div>',
+          '    </div>',
+          '    <div style="padding: 0 2px 4px 4px;">',
+          '      <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #666; margin-bottom: 2px;">',
+          '        <span>📦</span>',
+          '        <span>남은수량: 8개</span>',
+          '      </div>',
+          '      <div style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #666;">',
+          '        <span>⏰</span>',
+          '        <span>픽업시간: 오후 7-9시</span>',
+          '      </div>',
+          '    </div>',
+          '  </div>',
+          '</div>'
+        ].join('');
+
+        // 첫 번째 InfoWindow - 아보카도 샌드위치
+        const infowindow1 = new window.naver.maps.InfoWindow({
+          content: contentString1,
           maxWidth: 160,
           backgroundColor: "transparent",
           borderColor: "transparent",
@@ -65,8 +98,18 @@ const MapSection: React.FC = () => {
           pixelOffset: new window.naver.maps.Point(0, -10)
         });
 
-        // 마커 추가
-        const marker = new window.naver.maps.Marker({
+        // 두 번째 InfoWindow - 소금빵
+        const infowindow2 = new window.naver.maps.InfoWindow({
+          content: contentString2,
+          maxWidth: 160,
+          backgroundColor: "transparent",
+          borderColor: "transparent",
+          anchorSize: new window.naver.maps.Size(0, 0),
+          pixelOffset: new window.naver.maps.Point(0, -10)
+        });
+
+        // 첫 번째 마커 - 떠리 베이커리 (기존 위치)
+        const marker1 = new window.naver.maps.Marker({
           position: location,
           map: map,
           icon: {
@@ -75,7 +118,37 @@ const MapSection: React.FC = () => {
           }
         });
 
-        infowindow.open(map, marker);
+        // 두 번째 마커 - 성동구 베이커리 (새로운 위치)
+        const location2 = new window.naver.maps.LatLng(37.564556, 127.028832);
+        const marker2 = new window.naver.maps.Marker({
+          position: location2,
+          map: map,
+          icon: {
+            content: '<div style="width: 36px; height: 36px; background: white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;"><img src="/images/ThurryLogo.png" style="width: 24px; height: 24px; object-fit: contain;" /></div>',
+            anchor: new window.naver.maps.Point(18, 18)
+          }
+        });
+
+        // InfoWindow 열기
+        infowindow1.open(map, marker1);
+        infowindow2.open(map, marker2);
+
+        // 마커 클릭 이벤트 (선택적)
+        window.naver.maps.Event.addListener(marker1, 'click', () => {
+          if (infowindow1.getMap()) {
+            infowindow1.close();
+          } else {
+            infowindow1.open(map, marker1);
+          }
+        });
+
+        window.naver.maps.Event.addListener(marker2, 'click', () => {
+          if (infowindow2.getMap()) {
+            infowindow2.close();
+          } else {
+            infowindow2.open(map, marker2);
+          }
+        });
       }
     };
 

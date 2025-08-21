@@ -110,6 +110,31 @@ const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, use
               el.style.transition = 'none';
             }
           });
+
+          // 헤더 텍스트들을 살짝 위쪽으로 이동시켜 위치 보정
+          const headerContainer = clonedElement.querySelector('.flex.items-center.justify-between.mb-4');
+          if (headerContainer instanceof HTMLElement) {
+            // "떠리 패스" 텍스트 위치 보정
+            const titleText = headerContainer.querySelector('h3');
+            if (titleText instanceof HTMLElement) {
+              titleText.style.transform = 'translateY(-2px)'; // 2px 위로 이동
+              titleText.style.lineHeight = '1.2';
+              titleText.style.margin = '0';
+              titleText.style.padding = '0';
+            }
+            
+            // 오른쪽 코드 텍스트 위치 보정
+            const codeContainer = headerContainer.querySelector('.px-3.py-1.rounded-full.text-sm.font-medium');
+            if (codeContainer instanceof HTMLElement) {
+              const codeText = codeContainer.querySelector('span');
+              if (codeText instanceof HTMLElement) {
+                codeText.style.transform = 'translateY(-1px)'; // 1px 위로 이동
+                codeText.style.lineHeight = '1';
+                codeText.style.margin = '0';
+                codeText.style.padding = '0';
+              }
+            }
+          }
         }
       });
 
