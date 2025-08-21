@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './components/Header';
 import { initKakao } from './utils/kakaoInit';
 import HeroSection from './components/HeroSection';
@@ -7,13 +7,33 @@ import MapSection from './components/MapSection';
 import PreRegistrationSection from './components/PreRegistrationSection';
 import RegionRequestSection from './components/RegionRequestSection';
 import Footer from './components/Footer';
+import SurveyDialog from './components/SurveyDialog';
 
 function App() {
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [hasSeenSurvey, setHasSeenSurvey] = useState(false);
+
   useEffect(() => {
     // Smooth scrolling behavior
     document.documentElement.style.scrollBehavior = 'smooth';
     // Initialize Kakao SDK
     initKakao();
+
+    // 로컬 스토리지에서 설문 표시 여부 확인
+    const hasShownSurvey = localStorage.getItem('hasShownSurvey');
+    if (!hasShownSurvey) {
+      // 3초 후에 설문 표시
+      const timer = setTimeout(() => {
+        setShowSurvey(true);
+        // 설문이 표시되었음을 로컬 스토리지에 저장
+        localStorage.setItem('hasShownSurvey', 'true');
+        setHasSeenSurvey(true);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setHasSeenSurvey(true);
+    }
   }, []);
 
   return (
@@ -37,6 +57,12 @@ function App() {
           </button>
         </div>
       </div>
+
+      {/* Survey Dialog */}
+      <SurveyDialog 
+        isOpen={showSurvey} 
+        onClose={() => setShowSurvey(false)} 
+      />
     </div>
   );
 }
