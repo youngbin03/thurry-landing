@@ -79,17 +79,9 @@ const PreRegistrationSection: React.FC = () => {
       // 패스권 발급 성공
       console.log('패스권 발급 성공:', result.passId);
 
-      // UI용 쿠폰 데이터 생성
-      const now = new Date();
-      const startDate = new Date(2024, 8, 1); // 9월 1일
-      const endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() + 7); // 일주일 후
-      
-      // 현재 날짜가 9월 1일 이후라면 오늘부터 시작
-      if (now >= startDate) {
-        startDate.setTime(now.getTime());
-        endDate.setTime(now.getTime() + (7 * 24 * 60 * 60 * 1000));
-      }
+      // UI용 쿠폰 데이터 생성 (고정 날짜)
+      const startDate = new Date(2024, 8, 1); // 9월 1일 고정
+      const endDate = new Date(2024, 8, 8);   // 9월 8일 고정
       
       setCouponData({
         passId: result.passId || `THURRY_${Math.random().toString(36).substr(2, 8).toUpperCase()}`,
@@ -132,9 +124,9 @@ const PreRegistrationSection: React.FC = () => {
           <div className="space-y-3">
             <p className="text-lg text-gray-600">
               가장 먼저 떠리를 만나보세요!<br />
-              지금 공유하면 <span className="text-orange-500 font-bold">7일 떠리 패스권*</span>을 받을 수 있어요!
+              지금 공유하면 <span className="text-orange-500 font-bold">베이커리 50% 할인권</span>을 드려요!
             </p>
-            <p className="text-sm text-gray-500">*떠리 패스: 데일리 무료빵 픽업쿠폰</p>
+            <p className="text-sm text-gray-500">*성동구 제휴 베이커리에서 사용 가능한 할인쿠폰</p>
           </div>
           <img src="/images/scon_free.png" alt="무료 패스권" className="w-32 h-auto" />
         </div>
@@ -225,12 +217,12 @@ const PreRegistrationSection: React.FC = () => {
             {isLoading ? (
               <>
                 <div className="w-5 h-5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin"></div>
-                패스권 발급 중...
+                할인권 발급 중...
               </>
             ) : (
               <>
                 <img src="/icons/kakao_logo.svg" alt="Kakao" className="w-5 h-5" />
-                카카오톡으로 공유하고 쿠폰받기
+                카카오톡으로 공유하고 할인권받기
               </>
             )}
           </button>

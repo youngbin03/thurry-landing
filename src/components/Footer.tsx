@@ -12,7 +12,7 @@ const Footer: React.FC = () => {
 
           {/* 회사 정보 */}
           <div className="text-gray-400 text-sm space-y-1.5 mb-4">
-            <p>상호: (주)떠리 | 대표: 김성은·신영빈</p>
+            <p>상호: (주)떠리 | 대표: 김성은</p>
             <p>사업자 등록번호: 218-13-19643</p>
             <p>주소: 서울특별시 성동구 왕십리로 22</p>
             <p>고객센터 문의: thurry.official@gmail.com</p>

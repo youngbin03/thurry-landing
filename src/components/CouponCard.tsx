@@ -200,7 +200,7 @@ const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, use
                   crossOrigin="anonymous"
                 />
               </div>
-              <h3 className="text-xl font-bold">떠리 패스</h3>
+              <h3 className="text-xl font-bold">베이커리 할인권</h3>
             </div>
             <div 
               className="px-3 py-1 rounded-full text-sm font-medium" 
@@ -215,10 +215,10 @@ const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, use
           <div className="space-y-2 mb-6">
             <div className="flex items-center">
               <span className="text-2xl mr-2">🎁</span>
-              <span className="text-lg font-bold">데일리 무료빵 1개</span>
+              <span className="text-lg font-bold">베이커리 50% 할인</span>
             </div>
             <div className="text-sm opacity-80">
-              매일 1개의 무료빵을 받을 수 있는 특별 패스입니다.
+              성동구 제휴 베이커리에서 50% 할인을 받을 수 있는 특별 쿠폰입니다. (계정당 1개만 사용가능해요)
             </div>
           </div>
 
