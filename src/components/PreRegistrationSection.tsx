@@ -126,13 +126,13 @@ const PreRegistrationSection: React.FC = () => {
     <section className="py-12 px-4 bg-gradient-to-br from-orange-50/80 via-orange-50/50 to-white">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-bold text-gray-900 mb-3">
-          지금 성동구에 있으신가요?
+          지금 성동구에 계시나요?
         </h2>
         <div className="flex items-start justify-between mb-8">
           <div className="space-y-3">
             <p className="text-lg text-gray-600">
               가장 먼저 떠리를 만나보세요!<br />
-              지금 공유하면 <span className="text-orange-500 font-bold">떠리 패스권*</span>을 드려요!
+              지금 공유하면 <span className="text-orange-500 font-bold">7일 떠리 패스권*</span>을 받을 수 있어요!
             </p>
             <p className="text-sm text-gray-500">*떠리 패스: 데일리 무료빵 픽업쿠폰</p>
           </div>

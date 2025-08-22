@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 declare global {
   interface Window {
@@ -9,6 +9,8 @@ declare global {
 
 const MapSection: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<any>(null);
+  const [activeTab, setActiveTab] = useState<'store' | 'reservation' | 'profile'>('store');
 
   useEffect(() => {
     const initMap = () => {
@@ -21,6 +23,7 @@ const MapSection: React.FC = () => {
           mapTypeControl: false
         };
         const map = new window.naver.maps.Map(mapRef.current, mapOptions);
+        mapInstanceRef.current = map; // 지도 인스턴스 저장
 
         // 첫 번째 마커 - 아보카도 샌드위치 (기존)
         const contentString1 = [
@@ -119,7 +122,7 @@ const MapSection: React.FC = () => {
         });
 
         // 두 번째 마커 - 성동구 베이커리 (새로운 위치)
-        const location2 = new window.naver.maps.LatLng(37.564556, 127.028832);
+        const location2 = new window.naver.maps.LatLng(37.562391, 127.038133);
         const marker2 = new window.naver.maps.Marker({
           position: location2,
           map: map,
@@ -167,6 +170,22 @@ const MapSection: React.FC = () => {
       document.head.removeChild(initScript);
     };
   }, []);
+
+  // 탭 전환 시 지도 리사이즈
+  useEffect(() => {
+    if (activeTab === 'store' && mapInstanceRef.current) {
+      // 약간의 지연 후 지도 리사이즈 (DOM 업데이트 완료 후)
+      const timer = setTimeout(() => {
+        if (mapInstanceRef.current && window.naver) {
+          mapInstanceRef.current.refresh();
+          // 지도 크기 재계산
+          window.naver.maps.Event.trigger(mapInstanceRef.current, 'resize');
+        }
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [activeTab]);
   return (
     <section className="pt-2 pb-12 px-4 bg-white">
       <div className="max-w-4xl mx-auto">
@@ -184,26 +203,94 @@ const MapSection: React.FC = () => {
         <div className="relative bg-gray-50 rounded-2xl overflow-hidden mx-auto max-w-sm border border-gray-100 mb-4">
           {/* Phone Frame */}
           <div className="relative">
-            {/* Map Background */}
+            {/* Content Area */}
             <div className="h-[calc(100vh-220px)] relative">
-              <div ref={mapRef} className="w-full h-full absolute inset-0" />
-
-
+              {/* Map View */}
+              <div 
+                ref={mapRef} 
+                className={`w-full h-full absolute inset-0 ${
+                  activeTab === 'store' ? 'block' : 'hidden'
+                }`}
+              />
+              
+              {/* Reservation View */}
+              {activeTab === 'reservation' && (
+                <div className="w-full h-full absolute inset-0 bg-white overflow-y-auto">
+                  <img 
+                    src="/images/screenshot02.png" 
+                    alt="예약 내역" 
+                    className="w-full h-auto object-contain"
+                    style={{ minHeight: '100%' }}
+                  />
+                </div>
+              )}
+              
+              {/* Profile View */}
+              {activeTab === 'profile' && (
+                <div className="w-full h-full absolute inset-0 bg-gray-100 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">👤</div>
+                    <p className="text-gray-600">프로필 화면</p>
+                  </div>
+                </div>
+              )}
 
               {/* Bottom Navigation */}
               <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100">
                 <div className="flex justify-around py-3">
-                  <button className="flex flex-col items-center gap-1.5">
-                    <img src="/icons/shop.svg" alt="매장" className="w-6 h-6 text-orange-500" style={{ filter: 'invert(60%) sepia(19%) saturate(2313%) hue-rotate(338deg) brightness(100%) contrast(103%)' }} />
-                    <span className="text-xs font-medium text-orange-500">매장</span>
+                  <button 
+                    onClick={() => setActiveTab('store')}
+                    className="flex flex-col items-center gap-1.5"
+                  >
+                    <img 
+                      src="/icons/shop.svg" 
+                      alt="매장" 
+                      className="w-6 h-6" 
+                      style={{ 
+                        filter: activeTab === 'store' 
+                          ? 'invert(60%) sepia(19%) saturate(2313%) hue-rotate(338deg) brightness(100%) contrast(103%)' 
+                          : 'invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(60%) contrast(100%)'
+                      }} 
+                    />
+                    <span className={`text-xs font-medium ${
+                      activeTab === 'store' ? 'text-orange-500' : 'text-gray-400'
+                    }`}>매장</span>
                   </button>
-                  <button className="flex flex-col items-center gap-1.5">
-                    <img src="/icons/receipt.svg" alt="예약" className="w-6 h-6" />
-                    <span className="text-xs font-medium text-gray-400">예약</span>
+                  <button 
+                    onClick={() => setActiveTab('reservation')}
+                    className="flex flex-col items-center gap-1.5"
+                  >
+                    <img 
+                      src="/icons/receipt.svg" 
+                      alt="예약" 
+                      className="w-6 h-6" 
+                      style={{ 
+                        filter: activeTab === 'reservation' 
+                          ? 'invert(60%) sepia(19%) saturate(2313%) hue-rotate(338deg) brightness(100%) contrast(103%)' 
+                          : 'invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(60%) contrast(100%)'
+                      }} 
+                    />
+                    <span className={`text-xs font-medium ${
+                      activeTab === 'reservation' ? 'text-orange-500' : 'text-gray-400'
+                    }`}>예약</span>
                   </button>
-                  <button className="flex flex-col items-center gap-1.5">
-                    <img src="/icons/profile.svg" alt="프로필" className="w-6 h-6" />
-                    <span className="text-xs font-medium text-gray-400">프로필</span>
+                  <button 
+                    onClick={() => setActiveTab('profile')}
+                    className="flex flex-col items-center gap-1.5"
+                  >
+                    <img 
+                      src="/icons/profile.svg" 
+                      alt="프로필" 
+                      className="w-6 h-6" 
+                      style={{ 
+                        filter: activeTab === 'profile' 
+                          ? 'invert(60%) sepia(19%) saturate(2313%) hue-rotate(338deg) brightness(100%) contrast(103%)' 
+                          : 'invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(60%) contrast(100%)'
+                      }} 
+                    />
+                    <span className={`text-xs font-medium ${
+                      activeTab === 'profile' ? 'text-orange-500' : 'text-gray-400'
+                    }`}>프로필</span>
                   </button>
                 </div>
               </div>

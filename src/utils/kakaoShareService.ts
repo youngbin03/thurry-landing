@@ -22,7 +22,7 @@ interface KakaoShareResult {
 
 export class KakaoShareService {
   private static readonly WEBHOOK_CHECK_INTERVAL = 3000; // 3초마다 체크
-  private static readonly WEBHOOK_TIMEOUT = 60000; // 60초 타임아웃
+  private static readonly WEBHOOK_TIMEOUT = 30000; // 30초 타임아웃
   private static readonly APP_KEY = '3603235ce533a9b3b7a8192bf07c5908';
 
   /**
