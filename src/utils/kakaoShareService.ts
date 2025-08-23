@@ -138,11 +138,40 @@ export class KakaoShareService {
     return new Promise((resolve) => {
       const db = getDatabase(app);
       const webhookRef = ref(db, `webhook_callbacks/${callbackId}`);
+      const statusRef = ref(db, `webhook_status/${callbackId}`);
       let timeoutId: NodeJS.Timeout;
       let checkCount = 0;
       const maxChecks = Math.floor(this.WEBHOOK_TIMEOUT / this.WEBHOOK_CHECK_INTERVAL);
 
-      // Firebase Realtime Database 리스너 설정
+      // webhook_status 리스너 - CHAT_TYPE 오류 등을 확인
+      onValue(statusRef, async (snapshot) => {
+        const statusData = snapshot.val();
+        console.log('웹훅 상태 확인:', statusData);
+
+        if (statusData) {
+          clearTimeout(timeoutId);
+          off(webhookRef);
+          off(statusRef);
+
+          if (statusData.success === false) {
+            resolve({
+              success: false,
+              error: statusData.error || 'UNKNOWN_ERROR'
+            });
+            return;
+          }
+
+          if (statusData.success === true && statusData.passId) {
+            resolve({
+              success: true,
+              passId: statusData.passId
+            });
+            return;
+          }
+        }
+      });
+
+      // 기존 webhook_callbacks 리스너 설정
       onValue(webhookRef, async (snapshot) => {
         const data = snapshot.val();
         console.log('웹훅 데이터 확인:', data);
@@ -150,7 +179,8 @@ export class KakaoShareService {
         if (data?.shared === true) {
           // 웹훅 수신 확인됨
           clearTimeout(timeoutId);
-          off(webhookRef); // 리스너 제거
+          off(webhookRef);
+          off(statusRef);
 
           if (data.isValidTemplate) {
             resolve({
@@ -170,6 +200,7 @@ export class KakaoShareService {
           if (checkCount >= maxChecks) {
             // 타임아웃
             off(webhookRef);
+            off(statusRef);
             resolve({
               success: false,
               error: '카카오톡 공유 완료를 확인하지 못했습니다.'

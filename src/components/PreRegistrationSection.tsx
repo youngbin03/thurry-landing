@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { KakaoShareService } from '../utils/kakaoShareService';
 import CouponCard from './CouponCard';
 import ShareFailDialog from './ShareFailDialog';
+import ChatTypeErrorDialog from './ChatTypeErrorDialog';
 
 const PreRegistrationSection: React.FC = () => {
   const [gender, setGender] = useState('');
   const [age, setAge] = useState('');
   const [participantCount, setParticipantCount] = useState(0);
+  const [showChatTypeError, setShowChatTypeError] = useState(false);
 
   useEffect(() => {
     // 8월 1일부터 현재까지의 20분 단위 계산
@@ -72,7 +74,13 @@ const PreRegistrationSection: React.FC = () => {
 
       if (!result.success) {
         console.error('공유 실패:', result.error);
-        setShowFailDialog(true);
+        
+        // CHAT_TYPE 오류인 경우 특별한 다이얼로그 표시
+        if (result.error === 'INVALID_CHAT_TYPE') {
+          setShowChatTypeError(true);
+        } else {
+          setShowFailDialog(true);
+        }
         return;
       }
 
@@ -116,7 +124,7 @@ const PreRegistrationSection: React.FC = () => {
 
   return (
     <section className="py-12 px-4 bg-gradient-to-br from-orange-50/80 via-orange-50/50 to-white">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-[480px] mx-auto">
         <h2 className="text-2xl font-bold text-gray-900 mb-3">
           지금 성동구에 계시나요?
         </h2>
@@ -124,7 +132,7 @@ const PreRegistrationSection: React.FC = () => {
           <div className="space-y-3">
             <p className="text-lg text-gray-600">
               가장 먼저 떠리를 만나보세요!<br />
-              지금 공유하면 <span className="text-orange-500 font-bold">베이커리 50% 할인권</span>을 드려요!
+              떠리를 카카오톡으로 공유하면 <span className="text-orange-500 font-bold">베이커리 50% 할인권</span>을 드려요!
             </p>
             <p className="text-sm text-gray-500">*성동구 제휴 베이커리에서 사용 가능한 할인쿠폰</p>
           </div>
@@ -264,6 +272,12 @@ const PreRegistrationSection: React.FC = () => {
           isOpen={showFailDialog}
           onClose={handleCloseFailDialog}
           onRetry={handleRetryShare}
+        />
+
+        {/* 채팅방 타입 오류 다이얼로그 */}
+        <ChatTypeErrorDialog
+          isOpen={showChatTypeError}
+          onClose={() => setShowChatTypeError(false)}
         />
       </div>
     </section>

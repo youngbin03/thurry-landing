@@ -28,7 +28,10 @@ const OnboardingSection: React.FC = () => {
 
   return (
     <section className="pt-8 pb-16 px-4 bg-white">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-[480px] mx-auto">
+        <h2 className="text-2xl font-bold text-orange-500 mb-8 px-4">
+          떠리 서비스 소개
+        </h2>
         <div className="relative">
           {/* Carousel Container */}
           <div className="overflow-hidden rounded-3xl">

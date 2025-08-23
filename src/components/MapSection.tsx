@@ -188,7 +188,7 @@ const MapSection: React.FC = () => {
   }, [activeTab]);
   return (
     <section className="pt-2 pb-12 px-4 bg-white">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-[480px] mx-auto">
         <div className="max-w-lg pl-4">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
             내 주변 빵집,<br />

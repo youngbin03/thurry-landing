@@ -53,7 +53,7 @@ const RegionRequestSection: React.FC = () => {
 
   return (
     <section className="py-12 px-4 bg-gradient-to-b from-white via-white to-gray-200">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-[480px] mx-auto">
                  <h2 className="text-3xl md:text-4xl font-bold text-orange-500 mb-4">
             우리 지역도 필요해요!
           </h2>

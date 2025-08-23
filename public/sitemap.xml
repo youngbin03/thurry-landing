@@ -1,15 +1,148 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <!-- 메인 페이지 -->
   <url>
     <loc>https://thurry.com/</loc>
-    <lastmod>2024-01-20</lastmod>
+    <lastmod>2025-01-04</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://thurry.com/images/page03.png</image:loc>
+      <image:caption>떠리 - 베이커리 마감할인 서비스</image:caption>
+      <image:title>떠리 앱 미리보기</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://thurry.com/images/screenshot03.png</image:loc>
+      <image:caption>떠리 앱 스크린샷</image:caption>
+      <image:title>떠리 앱 인터페이스</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://thurry.com/images/ThurryLogo.png</image:loc>
+      <image:caption>떠리 로고</image:caption>
+      <image:title>Thurry Logo</image:title>
+    </image:image>
+  </url>
+
+  <!-- 서비스 소개 이미지들 -->
+  <url>
+    <loc>https://thurry.com/images/page01.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/page02.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://thurry.com/images/page03.png</loc>
-    <lastmod>2024-01-20</lastmod>
+    <lastmod>2025-01-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/page04.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- 앱 스크린샷 -->
+  <url>
+    <loc>https://thurry.com/images/screenshot02.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/screenshot03.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- 브랜드 이미지 -->
+  <url>
+    <loc>https://thurry.com/images/ThurryLogo.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/ThurryText.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/ThurryLogo2.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- 음식 이미지 -->
+  <url>
+    <loc>https://thurry.com/images/food.jpg</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/food02.jpg</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- 기타 이미지 -->
+  <url>
+    <loc>https://thurry.com/images/scon_free.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/bread_love.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/images/donut_sorry.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- 아이콘 -->
+  <url>
+    <loc>https://thurry.com/icons/bread.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/icons/bread_pick.png</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- 매니페스트 및 기타 -->
+  <url>
+    <loc>https://thurry.com/manifest.json</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://thurry.com/robots.txt</loc>
+    <lastmod>2025-01-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

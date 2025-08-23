@@ -236,13 +236,20 @@ const CouponCard: React.FC<CouponCardProps> = ({ passId, startDate, endDate, use
 
         {/* 티켓 하단 */}
         <div className="p-6 border-t border-white/20">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-3">
             <div className="text-white text-sm">
               <span className="opacity-80">발급일</span>
               <div className="font-medium">
                 {new Date().toLocaleDateString('ko-KR')}
               </div>
             </div>
+          </div>
+          
+          {/* 사용 안내 메시지 */}
+          <div className="bg-white/10 rounded-lg p-3 border border-white/20">
+            <p className="text-white text-xs text-center opacity-90 leading-relaxed">
+              💡 <span className="font-medium">떠리 앱 프로필에서 등록해서 사용할 수 있어요!</span>
+            </p>
           </div>
         </div>
 

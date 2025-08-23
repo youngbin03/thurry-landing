@@ -3,7 +3,7 @@ import React from 'react';
 const HeroSection: React.FC = () => {
   return (
     <section className="pt-16 flex flex-col items-center justify-start bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600">
-      <div className="max-w-6xl w-full mx-auto px-4 pt-12">
+      <div className="max-w-[480px] w-full mx-auto px-4 pt-12">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-2 tracking-tight">
             매일 무료빵 1개
